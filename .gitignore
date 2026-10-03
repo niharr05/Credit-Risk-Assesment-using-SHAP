@@ -3,3 +3,5 @@
 .DS_Store
 __pycache__/
 *.pyc
+.auracredit_live_high_risk.png
+.auracredit_live_low_risk.png

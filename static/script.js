@@ -324,4 +324,14 @@
       setLoading(false);
     }
   });
+
+  // ---------- Auto Demo Trigger via Query Param ----------
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("demo") === "low") {
+    if (presetLowBtn) presetLowBtn.click();
+    setTimeout(() => submitBtn.click(), 400);
+  } else if (urlParams.get("demo") === "high") {
+    if (presetHighBtn) presetHighBtn.click();
+    setTimeout(() => submitBtn.click(), 400);
+  }
 })();
