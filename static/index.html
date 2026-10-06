@@ -8,30 +8,39 @@
   <meta name="description"
     content="Institutional-grade credit risk underwriting powered by calibrated XGBoost and SHAP explainability." />
 
-  <!-- Fonts -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="stylesheet" href="style.css?v=3" />
 </head>
 
 <body>
+
+  <!-- Interactive Neural Constellation Background Canvas -->
+  <canvas id="particleCanvas" class="particle-canvas" aria-hidden="true"></canvas>
+
+  <!-- Dynamic Cursor Spotlight Follower -->
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
   <!-- Ambient Animated Glass Orbs -->
   <div class="ambient-glow glow-1" aria-hidden="true"></div>
   <div class="ambient-glow glow-2" aria-hidden="true"></div>
   <div class="ambient-glow glow-3" aria-hidden="true"></div>
 
+  <!-- Confetti / Particle Shockwave Canvas for Verdict -->
+  <canvas id="verdictShockwave" class="shockwave-canvas" aria-hidden="true"></canvas>
+
   <div class="app-shell">
 
     <!-- Top Navigation / Brand Masthead -->
-    <header class="navbar glass-card">
+    <header class="navbar glass-card tilt-element">
       <div class="brand">
         <div class="brand__icon">
-          <svg width="38" height="38" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="42" height="42" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="32" height="32" rx="10" fill="url(#brand-grad)" />
             <path d="M16 6L24 10V17C24 22 20.5 25.5 16 27C11.5 25.5 8 22 8 17V10L16 6Z" stroke="#ffffff"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -49,7 +58,7 @@
         <div>
           <div class="brand__title-row">
             <h1 class="brand__name">AuraCredit</h1>
-            <span class="badge-tag">XGBoost • SHAP</span>
+            <span class="badge-tag live-badge"><span class="live-dot"></span>XGBoost • SHAP</span>
           </div>
           <p class="brand__subtitle">Explainable Credit Risk & Underwriting Desk</p>
         </div>
@@ -58,17 +67,33 @@
       <div class="nav-right">
         <!-- Preset Loaders for Quick Interactive Demo -->
         <div class="presets-group">
-          <span class="presets-label">Quick Demo:</span>
-          <button type="button" class="preset-pill preset-low" id="presetLowRisk"
+          <span class="presets-label">Quick Scenarios:</span>
+          <button type="button" class="preset-pill preset-low ripple-btn" id="presetLowRisk"
             title="Populate prime borrower profile">
             <span class="preset-dot green"></span> Prime Profile
           </button>
-          <button type="button" class="preset-pill preset-high" id="presetHighRisk"
+          <button type="button" class="preset-pill preset-high ripple-btn" id="presetHighRisk"
             title="Populate subprime borrower profile">
             <span class="preset-dot red"></span> High Risk Profile
           </button>
         </div>
 
+        <!-- Sound FX Toggle -->
+        <button type="button" class="sound-toggle-btn" id="soundToggle" title="Toggle UI Sound Effects" aria-label="Toggle Sound">
+          <svg class="sound-icon sound-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+          <svg class="sound-icon sound-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+          <span class="sound-label">Audio FX</span>
+        </button>
+
+        <!-- Service Health Pill -->
         <div class="service-pill" id="apiStatus">
           <span class="pulse-dot" id="apiDot"></span>
           <span id="apiStatusText" class="status-label">Checking engine…</span>
@@ -76,16 +101,45 @@
       </div>
     </header>
 
-    <!-- Main Content Grid -->
+    <!-- Live Telemetry Stream Ticker -->
+    <div class="telemetry-bar glass-card">
+      <div class="telemetry-inner">
+        <div class="telemetry-track" id="telemetryTrack">
+          <span class="telemetry-item"><span class="indicator-green">●</span> PIPELINE: Calibrated XGBoost 3.4.1</span>
+          <span class="telemetry-sep">|</span>
+          <span class="telemetry-item">⚡ INFERENCE TARGET: &lt;15ms</span>
+          <span class="telemetry-sep">|</span>
+          <span class="telemetry-item">🎯 OPTIMAL CUTOFF: PR-AUC 0.318</span>
+          <span class="telemetry-sep">|</span>
+          <span class="telemetry-item">🔍 SHAP: TreeExplainer Additive Kernel</span>
+          <span class="telemetry-sep">|</span>
+          <span class="telemetry-item">🛡️ COMPLIANCE: Fair Lending &amp; FCRA Aligned</span>
+          <span class="telemetry-sep">|</span>
+          <span class="telemetry-item"><span class="indicator-green">●</span> PIPELINE: Calibrated XGBoost 3.4.1</span>
+          <span class="telemetry-sep">|</span>
+          <span class="telemetry-item">⚡ INFERENCE TARGET: &lt;15ms</span>
+          <span class="telemetry-sep">|</span>
+          <span class="telemetry-item">🎯 OPTIMAL CUTOFF: PR-AUC 0.318</span>
+          <span class="telemetry-sep">|</span>
+          <span class="telemetry-item">🔍 SHAP: TreeExplainer Additive Kernel</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Layout -->
     <main class="main-layout">
 
       <!-- Underwriting Application Form -->
       <form class="underwriting-form" id="riskForm" novalidate>
 
         <!-- Section 1: Applicant Profile -->
-        <section class="form-card glass-card">
+        <section class="form-card glass-card tilt-element">
+          <div class="card-beam"></div>
           <div class="card-header">
-            <div class="step-badge">01</div>
+            <div class="step-badge">
+              <span>01</span>
+              <div class="step-badge__glow"></div>
+            </div>
             <div>
               <h2 class="card-title">Borrower Profile</h2>
               <p class="card-desc">Demographics, income streams, and residential background</p>
@@ -101,6 +155,7 @@
                   required />
                 <span class="input-affix">yrs</span>
               </div>
+              <input type="range" class="mini-slider" id="slider_age" min="18" max="80" value="29" tabindex="-1">
             </div>
 
             <!-- Annual Income -->
@@ -110,6 +165,11 @@
                 <span class="input-prefix">₹</span>
                 <input type="number" id="person_income" name="person_income" min="0" step="1000" value="75000"
                   required />
+              </div>
+              <div class="quick-adjust-pills">
+                <button type="button" class="quick-inc-btn" data-target="person_income" data-delta="-10000">-₹10k</button>
+                <button type="button" class="quick-inc-btn" data-target="person_income" data-delta="10000">+₹10k</button>
+                <button type="button" class="quick-inc-btn" data-target="person_income" data-delta="25000">+₹25k</button>
               </div>
             </div>
 
@@ -134,14 +194,19 @@
                   value="5.5" required />
                 <span class="input-affix">yrs</span>
               </div>
+              <input type="range" class="mini-slider" id="slider_emp" min="0" max="30" step="0.5" value="5.5" tabindex="-1">
             </div>
           </div>
         </section>
 
         <!-- Section 2: Loan Structure & Intent -->
-        <section class="form-card glass-card">
+        <section class="form-card glass-card tilt-element">
+          <div class="card-beam"></div>
           <div class="card-header">
-            <div class="step-badge">02</div>
+            <div class="step-badge">
+              <span>02</span>
+              <div class="step-badge__glow"></div>
+            </div>
             <div>
               <h2 class="card-title">Loan Structure & Intent</h2>
               <p class="card-desc">Facility parameters, risk grading, and debt allocation</p>
@@ -187,6 +252,11 @@
                 <span class="input-prefix">₹</span>
                 <input type="number" id="loan_amnt" name="loan_amnt" min="0" step="500" value="12000" required />
               </div>
+              <div class="quick-adjust-pills">
+                <button type="button" class="quick-inc-btn" data-target="loan_amnt" data-delta="-2500">-₹2.5k</button>
+                <button type="button" class="quick-inc-btn" data-target="loan_amnt" data-delta="2500">+₹2.5k</button>
+                <button type="button" class="quick-inc-btn" data-target="loan_amnt" data-delta="5000">+₹5k</button>
+              </div>
             </div>
 
             <!-- Interest Rate -->
@@ -197,30 +267,48 @@
                   required />
                 <span class="input-affix">%</span>
               </div>
+              <input type="range" class="mini-slider" id="slider_rate" min="3" max="30" step="0.1" value="10.85" tabindex="-1">
             </div>
 
-            <!-- Debt to Income / Ratio -->
+            <!-- Interactive Debt to Income / Dynamic Live Bar -->
             <div class="field-box full-width">
               <div class="label-row">
-                <label for="loan_percent_income">Loan to Annual Income Ratio</label>
-                <span class="ratio-indicator" id="ratioIndicator">18.5% of income</span>
+                <label for="loan_percent_income">Loan to Annual Income Ratio (DTI)</label>
+                <span class="ratio-indicator" id="ratioIndicator">16.0% of income</span>
               </div>
               <div class="input-wrapper">
                 <input type="number" id="loan_percent_income" name="loan_percent_income" min="0" max="1" step="0.01"
-                  value="0.18" required />
+                  value="0.16" required />
                 <span class="input-affix">ratio</span>
               </div>
+
+              <!-- Animated Visual DTI Bar -->
+              <div class="dti-meter-container">
+                <div class="dti-meter-bar" id="dtiMeterBar" style="width: 16%;">
+                  <span class="dti-meter-glow"></span>
+                </div>
+                <div class="dti-meter-markers">
+                  <span class="marker marker-safe" style="left: 20%;">20% Safe</span>
+                  <span class="marker marker-warn" style="left: 35%;">35% Caution</span>
+                  <span class="marker marker-danger" style="left: 60%;">60% Critical</span>
+                </div>
+              </div>
+
               <p class="hint" id="percentHint">Auto-calculated dynamically from requested amount and annual income.</p>
             </div>
           </div>
         </section>
 
         <!-- Section 3: Credit Bureau History -->
-        <section class="form-card glass-card">
+        <section class="form-card glass-card tilt-element">
+          <div class="card-beam"></div>
           <div class="card-header">
-            <div class="step-badge">03</div>
+            <div class="step-badge">
+              <span>03</span>
+              <div class="step-badge__glow"></div>
+            </div>
             <div>
-              <h2 class="card-title">Credit Bureau (CIBIL / Experian)</h2>
+              <h2 class="card-title">Credit Bureau History</h2>
               <p class="card-desc">Historical delinquency records and credit vintage</p>
             </div>
           </div>
@@ -245,14 +333,16 @@
                   step="1" value="7" required />
                 <span class="input-affix">years</span>
               </div>
+              <input type="range" class="mini-slider" id="slider_cred_hist" min="1" max="30" step="1" value="7" tabindex="-1">
             </div>
           </div>
         </section>
 
-        <!-- Submit & Error Handling -->
+        <!-- Submit & Error Handling Dock -->
         <div class="action-dock">
-          <button type="submit" id="submitBtn" class="btn-primary">
+          <button type="submit" id="submitBtn" class="btn-primary ripple-btn">
             <span class="btn-glow"></span>
+            <span class="btn-shimmer"></span>
             <span class="btn-content">
               <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
@@ -269,71 +359,87 @@
 
       </form>
 
-      <!-- Risk Assessment Verdict (Glassmorphism Modal / Drawer) -->
-      <section class="verdict glass-card" id="verdict" aria-live="polite" hidden>
+      <!-- Risk Assessment Verdict Display -->
+      <section class="verdict glass-card tilt-element" id="verdict" aria-live="polite" hidden>
+        <!-- Scanning Laser Beam Animation on Reveal -->
+        <div class="laser-scanner" id="laserScanner"></div>
 
         <div class="verdict-banner">
           <div class="verdict-header">
-            <span class="eyebrow-tag">Underwriting Intelligence</span>
+            <span class="eyebrow-tag">
+              <span class="radar-dot"></span> Underwriting Intelligence
+            </span>
             <h3 class="verdict-title">Model Risk Assessment</h3>
           </div>
           <div class="stamp-wrap">
             <div class="stamp" id="stampBadge">
               <span id="stampText">LOW RISK</span>
+              <div class="stamp-sparkle-ring"></div>
             </div>
           </div>
         </div>
 
         <div class="verdict__inner">
-          <!-- Circular Holographic Gauge -->
+          <!-- Circular Holographic Animated Gauge -->
           <div class="gauge-container">
             <div class="gauge-ring">
+              <!-- Animated outer glow ring -->
+              <div class="gauge-halo" id="gaugeHalo"></div>
               <svg viewBox="0 0 200 200" class="gauge">
                 <defs>
                   <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stop-color="#10B981" id="gradStop1" />
                     <stop offset="100%" stop-color="#06B6D4" id="gradStop2" />
                   </linearGradient>
+                  <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
                 </defs>
                 <circle class="gauge__track" cx="100" cy="100" r="86" />
-                <circle class="gauge__fill" id="gaugeFill" cx="100" cy="100" r="86" stroke="url(#gaugeGrad)" />
+                <circle class="gauge__fill" id="gaugeFill" cx="100" cy="100" r="86" stroke="url(#gaugeGrad)" filter="url(#glowFilter)" />
                 <line class="gauge__threshold" id="gaugeThreshold" x1="100" y1="14" x2="100" y2="30" />
               </svg>
               <div class="gauge__readout">
-                <span class="gauge__number" id="probNumber">0</span><span class="gauge__percent">%</span>
+                <div class="gauge__numbers-wrapper">
+                  <span class="gauge__number" id="probNumber">0</span><span class="gauge__percent">%</span>
+                </div>
                 <span class="gauge__caption">Default Probability</span>
               </div>
             </div>
             <div class="threshold-legend">
               <span class="legend-line"></span>
-              <span>Optimal Cutoff Threshold: <strong id="legendThreshold">--</strong></span>
+              <span>Calibrated Cutoff Threshold: <strong id="legendThreshold">--</strong></span>
             </div>
           </div>
 
-          <!-- Structured Fact Cards -->
+          <!-- Structured Fact Cards & Visual SHAP Attribution -->
           <div class="verdict-breakdown">
 
             <div class="metric-tiles">
-              <div class="metric-tile glass-subcard">
+              <div class="metric-tile glass-subcard metric-hoverable">
                 <span class="tile-label">Scored Probability</span>
                 <span class="tile-val" id="factProb">—</span>
                 <span class="tile-sub">Empirical likelihood</span>
+                <div class="tile-progress"><div class="tile-progress-fill" id="probProgFill"></div></div>
               </div>
 
-              <div class="metric-tile glass-subcard">
+              <div class="metric-tile glass-subcard metric-hoverable">
                 <span class="tile-label">Calibrated Threshold</span>
                 <span class="tile-val" id="factThreshold">—</span>
-                <span class="tile-sub">Precision-recall bound</span>
+                <span class="tile-sub">PR-optimal bound</span>
+                <div class="tile-progress"><div class="tile-progress-fill" id="threshProgFill"></div></div>
               </div>
 
-              <div class="metric-tile glass-subcard">
-                <span class="tile-label">Credit Decision</span>
+              <div class="metric-tile glass-subcard metric-hoverable">
+                <span class="tile-label">Decision Recommendation</span>
                 <span class="tile-val highlight" id="factResult">—</span>
-                <span class="tile-sub">Automated verdict</span>
+                <span class="tile-sub" id="factSub">Policy recommendation</span>
+                <div class="tile-badge-pill" id="decisionPill">Automated</div>
               </div>
             </div>
 
-            <!-- Explainability (SHAP Insights) Container -->
+            <!-- Explainability (SHAP Waterfall Bars) Container -->
             <div class="shap-insights glass-subcard">
               <div class="shap-title-row">
                 <div class="shap-title-left">
@@ -342,15 +448,68 @@
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                       clip-rule="evenodd" />
                   </svg>
-                  <strong>Key Model Drivers (SHAP Local Attribution)</strong>
+                  <strong>Model Attribution (SHAP Waterfall Breakdown)</strong>
                 </div>
-                <span class="shap-badge">Game-Theoretic XAI</span>
+                <span class="shap-badge">TreeExplainer XAI</span>
               </div>
-              <ul class="shap-list" id="shapFactors">
-                <!-- Dynamically generated feature attribution highlights -->
-              </ul>
+              <p class="shap-subtitle">Local feature attributions determining the model decision:</p>
+              <div class="shap-bars-container" id="shapFactors">
+                <!-- Dynamically generated visual feature attribution waterfall bars -->
+              </div>
             </div>
 
+          </div>
+        </div>
+
+        <!-- Interactive "What-If" Sensitivity Simulator Drawer -->
+        <div class="whatif-section glass-subcard">
+          <div class="whatif-header" id="whatifToggle">
+            <div class="whatif-title">
+              <span class="whatif-bolt">⚡</span>
+              <div>
+                <strong>Interactive "What-If" Sensitivity Lab</strong>
+                <p>Tweak applicant variables in real-time to observe instant probability shifts</p>
+              </div>
+            </div>
+            <button type="button" class="whatif-btn" id="whatifBtn">
+              <span>Open Simulator</span>
+              <svg class="chevron-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="whatif-body" id="whatifBody" hidden>
+            <div class="whatif-sliders-grid">
+              <div class="whatif-control">
+                <div class="whatif-label-row">
+                  <span>Simulated Loan Principal:</span>
+                  <strong id="simAmntVal">₹12,000</strong>
+                </div>
+                <input type="range" class="sim-slider" id="simAmntSlider" min="2000" max="40000" step="500" value="12000">
+              </div>
+
+              <div class="whatif-control">
+                <div class="whatif-label-row">
+                  <span>Simulated Interest Rate:</span>
+                  <strong id="simRateVal">10.85%</strong>
+                </div>
+                <input type="range" class="sim-slider" id="simRateSlider" min="5" max="25" step="0.25" value="10.85">
+              </div>
+
+              <div class="whatif-control">
+                <div class="whatif-label-row">
+                  <span>Simulated Annual Income:</span>
+                  <strong id="simIncomeVal">₹75,000</strong>
+                </div>
+                <input type="range" class="sim-slider" id="simIncomeSlider" min="15000" max="200000" step="2500" value="75000">
+              </div>
+            </div>
+
+            <div class="whatif-action-row">
+              <button type="button" class="btn-subtle" id="applyWhatIfBtn">⚡ Apply &amp; Re-Score Application</button>
+              <span class="whatif-live-badge">Live recalculation enabled</span>
+            </div>
           </div>
         </div>
 
@@ -361,18 +520,19 @@
     <!-- Minimalist Footer -->
     <footer class="app-footer">
       <div class="footer-left">
-        <span>© AuraCredit Engine</span>
+        <span class="footer-brand">© AuraCredit Intelligence</span>
         <span class="footer-sep">•</span>
-        <span>XGBoost + SHAP Interpretability Framework</span>
+        <span>XGBoost + SHAP Explainability Architecture</span>
       </div>
       <div class="footer-right">
-        <span>Financial decision advisory only • Not final loan endorsement</span>
+        <span class="footer-badge">Institutional Sandbox Mode</span>
+        <span class="footer-disclaimer">Financial advisory only • Calibrated for regulatory risk transparency</span>
       </div>
     </footer>
 
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=3"></script>
 </body>
 
 </html>
